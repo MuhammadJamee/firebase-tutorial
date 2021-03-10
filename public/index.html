@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Firebase Realtime Database - Client Side</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+  <link rel="stylesheet" href="./style.css">
+</head>
+
+<body>
+  <main>
+    <form>
+      <label for="userId">User ID</label><br>
+      <input type="text" name="userId" id="userId"><br>
+      <label for="firstName">First Name</label><br>
+      <input type="text" name="firstName" id="firstName"><br>
+      <label for="lastName">Last Name</label><br>
+      <input type="text" name="lastName" id="lastName"><br>
+      <label for="age">Age</label><br>
+      <input type="number" name="age" id="age"><br>
+      <div class="mainDiv" align="right">
+        <progress id="uploader" value="0" max="100">0%</progress>
+        <input type="file" id="fileButton" value="upload" />
+      </div>
+      <button id="addBtn" class="btn waves-effect waves-light">Add</button>
+      <button id="updateBtn" class="btn waves-effect waves-light">Update</button>
+      <button id="removeBtn" class="btn waves-effect red darken-1">Remove</button>
+    </form>
+
+    <div style="margin-top: 20px; border-top: 2px solid black;"></div>
+
+    <div id="realtimedb"></div>
+  </main>
+
+  <!-- Firebase SDK -->
+
+  <!-- The core Firebase JS SDK is always required and must be listed first -->
+  <script src="https://www.gstatic.com/firebasejs/8.2.10/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.2.10/firebase-database.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.2.10/firebase-storage.js"></script>
+
+  <!-- TODO: Add SDKs for Firebase products that you want to use
+     https://firebase.google.com/docs/web/setup#available-libraries -->
+  <script src="https://www.gstatic.com/firebasejs/8.2.10/firebase-analytics.js"></script>
+
+  <script>
+    // Your web app's Firebase configuration
+    // For Firebase JS SDK v7.20.0 and later, measurementId is optional
+    // ###THIS IS UNIQUE ACCORDING TO THE PROJECT###
+    var firebaseConfig = {
+      apiKey: "AIzaSyDQfuv9QgllB2XQUvIZ-3AFihEww-zN9Tk",
+      authDomain: "its-appiskey.firebaseapp.com",
+      databaseURL: "https://its-appiskey-default-rtdb.firebaseio.com",
+      projectId: "its-appiskey",
+      storageBucket: "its-appiskey.appspot.com",
+      messagingSenderId: "814527019686",
+      appId: "1:814527019686:web:c5171ea8c8455bdf551267",
+      measurementId: "G-EM5FGJVCT5"
+    };
+    // Initialize Firebase
+    firebase.initializeApp(firebaseConfig);
+    firebase.analytics();//-------------------------------------
+
+    var uploader = document.getElementById('uploader');
+    var fileButton = document.getElementById('fileButton');
+    fileButton.addEventListener('change', function (e) {
+      var file = e.target.files[0];
+      var storageRef = firebase.storage().ref('img/' + file.name);
+      var task = storageRef.put(file);
+      task.on('state_changed', function progress(snapshot) {
+        var percentage = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+        uploader.value = percentage;
+      }, function error(err) {
+        console.log("An error occurred")
+      }, function complete() {
+        console.log("File uploaded")
+      });
+    });
+  </script>
+  <script src="./functions.js"></script>
+</body>
+
+</html>
